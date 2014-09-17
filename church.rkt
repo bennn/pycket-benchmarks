@@ -1,4 +1,4 @@
-#lang racket
+#lang racket/base
 (require "church-gen.rkt")
 
-(run-church plain)
+(run-church impersonate)

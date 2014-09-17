@@ -1,5 +1,7 @@
-#lang racket
-(require rackunit)
+#lang racket/base
+(require (for-syntax racket))
+(require racket/contract/base)
+(require (only-in '#%kernel impersonate-procedure))
 
 (provide run-church)
 
@@ -21,7 +23,7 @@
                (define-syntax begin-mode
                  (syntax-rules (plain wrap chaperone chaperone/a impersonate contract wrap/proxy)
                    [(_ mode e ...) (begin e ...)]
-                   [(_ wrap/proxy e ...) 
+                   [(_ wrap/proxy e ...)
                     (begin (begin-mode wrap e ...)
                            (begin-mode impersonate e ...)
                            (begin-mode chaperone e ...)
@@ -37,7 +39,7 @@
       (define-syntax-rule (define/contract f c b)
         (define f b)))
 
-     (begin-mode 
+     (begin-mode
       wrap/proxy
       (define (exact-nonnegative-integer/c n)
         (and (exact-nonnegative-integer? n)
@@ -50,37 +52,37 @@
       (define-syntax-rule (define/contract (f x) c b)
         (define f (c (lambda (x) b)))))
 
-     (begin-mode 
+     (begin-mode
       wrap
       (define (-> a b) (lambda (f)
                          (and (procedure? f)
                               (lambda (x)
                                 (b (f (a x))))))))
 
-     (begin-mode 
+     (begin-mode
       chaperone
       (define (-> a b) (lambda (f)
-                         (chaperone-procedure 
+                         (chaperone-procedure
                           f
                           (lambda (v)
                             (values b (a v)))))))
 
-     (begin-mode 
+     (begin-mode
       chaperone/a
       (define (-> a b) (lambda (f)
                          (if (and (eq? a any/c) (eq? b any))
                              (and (procedure? f) f)
-                             (chaperone-procedure 
+                             (chaperone-procedure
                               f
                               (if (eq? b any)
                                   a
                                   (lambda (v)
                                     (values b (a v)))))))))
 
-     (begin-mode 
+     (begin-mode
       impersonate
       (define (-> a b) (lambda (f)
-                         (impersonate-procedure 
+                         (impersonate-procedure
                           f
                           (lambda (v)
                             (values b (a v)))))))
@@ -100,9 +102,9 @@
        (-> exact-nonnegative-integer/c church/c)
        (cond
         [(zero? n) (λ (f) (λ (x) x))]
-        [else 
+        [else
          (define n-1 (n->f (- n 1)))
-         (λ (f) 
+         (λ (f)
             (define fn-1 (n-1 f))
             (λ (x) (f (fn-1 x))))]))
 
@@ -112,8 +114,8 @@
 
      (define/contract (c:* n1)
        (-> church/c (-> church/c church/c))
-       (λ (n2) 
-          (λ (f) 
+       (λ (n2)
+          (λ (f)
              (n1 (n2 f)))))
 
      (define/contract (c:zero? c)
@@ -124,11 +126,11 @@
      ;; the definition of 'X')
      (define/contract (c:sub1 n)
        (-> church/c church/c)
-       (λ (f) 
+       (λ (f)
           (define X (λ (g) (λ (h) (h (g f)))))
-          (λ (x) 
-             (((n X) 
-               (λ (u) x)) 
+          (λ (x)
+             (((n X)
+               (λ (u) x))
               (λ (u) u)))))
 
      (define/contract (c:! n)
