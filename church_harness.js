@@ -1,4 +1,4 @@
 var window = {}
-load("contracts.js")
+require("./contracts.js")
 window.Contracts = window.contracts
-load("church2.js")
+require("./church2.js")

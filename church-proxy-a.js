@@ -1,4 +1,8 @@
 
+if (typeof(print) === 'undefined') {
+    print = console.log
+}
+
 function function_c(object) {
     if (typeof object === "function")
         return object;
@@ -104,6 +108,6 @@ var c_fact = proc_c(church_c, church_c)(
                 });
 
 var milliseconds1 = Date.now(); 
-console.log(f_to_n(c_fact(n_to_f(9))));
+print(f_to_n(c_fact(n_to_f(9))));
 var milliseconds2 = Date.now(); 
-console.log(milliseconds2 - milliseconds1);
+print(milliseconds2 - milliseconds1);

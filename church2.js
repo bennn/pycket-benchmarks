@@ -1,8 +1,12 @@
 (function() {var __contracts, Undefined, Null, Num, Bool, Str, Odd, Even, Pos, Nat, Neg, Self, Any, None, __old_exports, __old_require;
+
+if (typeof(print) === 'undefined') {
+    print = console.log
+}
 if (typeof(window) !== 'undefined' && window !== null) {
   __contracts = window.Contracts;
 } else {
-  __contracts = require('contracts.js');
+  __contracts = require('./contracts.js');
 }
 Undefined =  __contracts.Undefined;
 Null      =  __contracts.Null;
@@ -106,9 +110,9 @@ if (typeof(require) !== 'undefined' && require !== null) {
 
   milliseconds1 = Date.now();
 
-  console.log(f_to_n(fact(n_to_f(9))));
+  print(f_to_n(fact(n_to_f(9))));
 
-  console.log(Date.now(0) - milliseconds1);
+  print(Date.now(0) - milliseconds1);
 
 }).call(this);
 }).call(this);

@@ -2,7 +2,7 @@
 (require "run-utils.rkt")
 
 (define v8-cmd "v8-shell --harmony")
-(define spidermonkey-cmd "js --harmony-proxies")
+(define spidermonkey-cmd "js --harmony-proxies --harmony-collections")
 
 (define all-proc-micro '(direct indirect wrapped wrapped+check wrapped+return))
 
@@ -193,7 +193,7 @@
    (multi-run (lambda () (run-church 'church "" "")))
    (multi-run (lambda () (run-church 'church-wrap "-wrap" "")))
    (multi-run (lambda () (run-church 'church-proxy "-proxy" "")))
-   (multi-run (lambda () (run-church 'church-contract "_harness" extra-contract-args)))
+   ;;(multi-run (lambda () (run-church 'church-contract "_harness" extra-contract-args)))
    (multi-run (lambda () (run-prog 'bubble "bubble" "" #f)))
    (multi-run (lambda () (run-prog 'bubble-proxy "bubble-proxy" "" #f)))
    (multi-run (lambda () (run-struct)))))

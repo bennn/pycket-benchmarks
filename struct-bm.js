@@ -1,4 +1,8 @@
 
+if (typeof(print) === 'undefined') {
+    print = console.log
+}
+
 function loop(f) {
     for (i = 0; i < 100000000; i++) {
         f.weight;
@@ -7,11 +11,11 @@ function loop(f) {
 
 var fish = { weight : 1, color : "blue" };
 
-console.log("direct");
+print("direct");
 milliseconds1 = Date.now(); 
 loop(fish);
 milliseconds2 = Date.now(); 
-console.log(milliseconds2 - milliseconds1);
+print(milliseconds2 - milliseconds1);
 
 var proxy = Proxy.create({
     get: function(rcvr,name) { return fish[name];},
@@ -21,9 +25,9 @@ var proxy = Proxy.create({
                          Object.getPrototypeOf(fish));
 
 
-console.log("proxy");
+print("proxy");
 milliseconds1 = Date.now(); 
 loop(proxy);
 milliseconds2 = Date.now(); 
-console.log(milliseconds2 - milliseconds1);
+print(milliseconds2 - milliseconds1);
 

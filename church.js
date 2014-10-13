@@ -1,4 +1,8 @@
 
+if (typeof(print) === 'undefined') {
+    print = console.log
+}
+
 var n_to_f = function(n) {
     if (n == 0)
         return function(f) { return function(x) { return x; }}
@@ -43,6 +47,6 @@ var fact = function(n){
 }
 
 var milliseconds1 = Date.now(); 
-console.log(f_to_n(fact(n_to_f(9))));
+print(f_to_n(fact(n_to_f(9))));
 var milliseconds2 = Date.now(); 
-console.log(milliseconds2 - milliseconds1);
+print(milliseconds2 - milliseconds1);

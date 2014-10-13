@@ -1,5 +1,9 @@
 var SIZE = 10000;
 
+if (typeof(print) === 'undefined') {
+    print = console.log
+}
+
 function make_vec(SIZE) {
     var vec = new Array(SIZE);
     for (i = 0; i < SIZE; i++)
@@ -32,4 +36,4 @@ var vec = make_vec(SIZE);
 var milliseconds1 = Date.now(); 
 bubble_sort(vec);
 var milliseconds2 = Date.now(); 
-console.log(milliseconds2 - milliseconds1);
+print(milliseconds2 - milliseconds1);
