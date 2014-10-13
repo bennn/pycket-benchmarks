@@ -7,11 +7,11 @@ function loop(f) {
 
 var fish = { weight : 1, color : "blue" };
 
-print("direct");
+console.log("direct");
 milliseconds1 = Date.now(); 
 loop(fish);
 milliseconds2 = Date.now(); 
-print(milliseconds2 - milliseconds1);
+console.log(milliseconds2 - milliseconds1);
 
 var proxy = Proxy.create({
     get: function(rcvr,name) { return fish[name];},
@@ -21,9 +21,9 @@ var proxy = Proxy.create({
                          Object.getPrototypeOf(fish));
 
 
-print("proxy");
+console.log("proxy");
 milliseconds1 = Date.now(); 
 loop(proxy);
 milliseconds2 = Date.now(); 
-print(milliseconds2 - milliseconds1);
+console.log(milliseconds2 - milliseconds1);
 

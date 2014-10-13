@@ -106,9 +106,9 @@ if (typeof(require) !== 'undefined' && require !== null) {
 
   milliseconds1 = Date.now();
 
-  print(f_to_n(fact(n_to_f(9))));
+  console.log(f_to_n(fact(n_to_f(9))));
 
-  print(Date.now(0) - milliseconds1);
+  console.log(Date.now(0) - milliseconds1);
 
 }).call(this);
 }).call(this);

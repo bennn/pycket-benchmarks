@@ -32,4 +32,4 @@ var vec = make_vec(SIZE);
 var milliseconds1 = Date.now(); 
 bubble_sort(vec);
 var milliseconds2 = Date.now(); 
-print(milliseconds2 - milliseconds1);
+console.log(milliseconds2 - milliseconds1);

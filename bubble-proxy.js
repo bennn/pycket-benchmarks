@@ -50,5 +50,5 @@ var proxy = Proxy.create({
 var milliseconds1 = Date.now(); 
 bubble_sort(proxy);
 var milliseconds2 = Date.now(); 
-print(milliseconds2 - milliseconds1);
+console.log(milliseconds2 - milliseconds1);
 //})()

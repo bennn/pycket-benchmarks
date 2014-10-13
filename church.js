@@ -43,6 +43,6 @@ var fact = function(n){
 }
 
 var milliseconds1 = Date.now(); 
-print(f_to_n(fact(n_to_f(9))));
+console.log(f_to_n(fact(n_to_f(9))));
 var milliseconds2 = Date.now(); 
-print(milliseconds2 - milliseconds1);
+console.log(milliseconds2 - milliseconds1);

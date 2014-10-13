@@ -2,7 +2,7 @@
 (require "run-utils.rkt")
 
 (define v8-cmd "v8-shell --harmony")
-(define spidermonkey-cmd "js -m -n")
+(define spidermonkey-cmd "js --harmony-proxies")
 
 (define all-proc-micro '(direct indirect wrapped wrapped+check wrapped+return))
 
@@ -10,14 +10,14 @@
 (define (run-racket* hack?)
   (define (run-multi what modes cvt)
     (define out (with-output-to-string
-                  (lambda () 
-                    (system/noisy (format "racket~a ~a-bm.rkt" 
+                  (lambda ()
+                    (system/noisy (format "racket~a ~a-bm.rkt"
                                           (if hack? "-hack-jit" "")
                                           what)))))
     (define in (open-input-string out))
     (for/hash ([t modes])
       (values (cvt t)
-              (extract-number (regexp (format "'~a\ncpu time: ([0-9]+)" 
+              (extract-number (regexp (format "'~a\ncpu time: ([0-9]+)"
                                               (regexp-quote (symbol->string t))))
                               in))))
   (define (run-proc)
@@ -33,7 +33,7 @@
 
   (define (run-prog name base suffix)
     (define out (with-output-to-string
-                  (lambda () (system/noisy (format "racket~a ~a~a.rkt" 
+                  (lambda () (system/noisy (format "racket~a ~a~a.rkt"
                                                    (if hack? "-hack-jit" "")
                                                    base
                                                    suffix)))))
@@ -75,7 +75,7 @@
 
 (define (run-larceny)
   (define larceny-cmd "larceny -r6rs -program")
-  (define rx #rx#"^Words allocated: [0-9]+\nElapsed time...: ([0-9]+) ms")
+  (define rx #rx#"^Words allocated: [0-9]+\nWords reclaimed: [0-9]+\nElapsed time...: ([0-9]+) ms")
   (define (run-proc)
     (define out
       (with-output-to-string
@@ -105,7 +105,7 @@
   (begin0
    (merge
     (multi-run (lambda () (run-proc)))
-    (multi-run (lambda () (run-church 'church ""))) 
+    (multi-run (lambda () (run-church 'church "")))
     (multi-run (lambda () (run-church 'church-wrap "-wrap")))
     (multi-run (lambda () (run-bubble 'bubble ".sch")))
     (multi-run (lambda () (run-bubble 'bubble-unsafe ".slfasl")))
@@ -134,7 +134,7 @@
     (hash name (extract-number rx out #:multiply 1000)))
   (define (run-church name suffix)
     (run-prog name (string-append "church" suffix)))
-  
+
   (system/noisy "csc -O3 -no-trace proc-bm.scm")
   (system/noisy "csc -O3 -no-trace church.scm")
   (system/noisy "csc -O3 -no-trace church-wrap.scm")
@@ -142,11 +142,11 @@
   (system/noisy "csc -O3 -no-trace -unsafe -o bubble-unsafe bubble.scm")
   (system/noisy "csc -O3 -no-trace struct-bm.scm")
   (system/noisy "csc -O3 -no-trace -unsafe -o struct-unsafe struct-bm.scm")
-  
+
   (begin0
    (merge
     (multi-run (lambda () (run-proc)))
-    (multi-run (lambda () (run-church 'church ""))) 
+    (multi-run (lambda () (run-church 'church "")))
     (multi-run (lambda () (run-church 'church-wrap "-wrap")))
     (multi-run (lambda () (run-prog 'bubble "bubble")))
     (multi-run (lambda () (run-prog 'bubble-unsafe "bubble-unsafe")))
@@ -190,7 +190,7 @@
     (run-prog name (string-append "church" suffix) args #rx"362880\n"))
   (merge
    (multi-run (lambda () (run-proc)))
-   (multi-run (lambda () (run-church 'church "" ""))) 
+   (multi-run (lambda () (run-church 'church "" "")))
    (multi-run (lambda () (run-church 'church-wrap "-wrap" "")))
    (multi-run (lambda () (run-church 'church-proxy "-proxy" "")))
    (multi-run (lambda () (run-church 'church-contract "_harness" extra-contract-args)))
@@ -206,7 +206,7 @@
 
 (define runners
   (hash "racket" run-racket
-        "racket-hack-jit" run-racket-hack-jit
+        ;;"racket-hack-jit" run-racket-hack-jit
         "larceny" run-larceny
         "chicken" run-chicken
         "v8" run-v8

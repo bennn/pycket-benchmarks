@@ -1,7 +1,8 @@
 #lang racket/base
 (require (for-syntax racket))
-(require racket/contract/base)
+(require racket/contract)
 (require (only-in '#%kernel impersonate-procedure))
+(require (only-in '#%kernel chaperone-procedure))
 
 (provide run-church)
 
@@ -154,7 +155,7 @@
      (check-equal? (f->n (c:! (n->f 3))) (! 3))
      |#
 
-     (time (void (f->n (c:! (n->f 9)))))
+     (time (void (f->n (c:! (n->f 8)))))
 
      #|
      (require (only-in ffi/unsafe get-ffi-obj _int))
