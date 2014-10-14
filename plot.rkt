@@ -13,8 +13,8 @@
 (define bstr
   (time (file:convert p 'png-bytes)))
 
-(require ffi/unsafe)
-(list (get-ffi-obj 'proc_makes #f _int)
-      (get-ffi-obj 'proc_apps #f _int))
+;;(require ffi/unsafe)
+;;(list (get-ffi-obj 'proc_makes #f _int)
+;;      (get-ffi-obj 'proc_apps #f _int))
 
 

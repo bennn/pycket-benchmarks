@@ -1,7 +1,7 @@
 #lang racket
 (require "run-utils.rkt")
 
-(define v8-cmd "v8-shell --harmony")
+(define v8-cmd "v8-shell --harmony_proxies")
 (define spidermonkey-cmd "js --harmony-proxies --harmony-collections")
 
 (define all-proc-micro '(direct indirect wrapped wrapped+check wrapped+return))
@@ -198,6 +198,62 @@
    (multi-run (lambda () (run-prog 'bubble-proxy "bubble-proxy" "" #f)))
    (multi-run (lambda () (run-struct)))))
 
+(define (run-pycket)
+  (define (run-multi what modes cvt)
+    (define out (with-output-to-string
+                  (lambda ()
+                    (system/noisy (format "pycket-c ~a-bm.rkt"
+                                          what)))))
+    (define in (open-input-string out))
+    (for/hash ([t modes])
+      (values (cvt t)
+              (extract-number (regexp (format "'~a\ncpu time: ([0-9]+)"
+                                              (regexp-quote (symbol->string t))))
+                              in))))
+  (define (run-proc)
+    (run-multi "proc"
+               (append all-proc-micro
+                       '(impersonate impersonate+return
+                                     chaperone chaperone+return))
+               (lambda (n) n)))
+  (define (run-struct)
+    (run-multi "struct"
+               '(direct chaperone unsafe unsafe*)
+               (lambda (n) (string->symbol (format "struct-~a" n)))))
+
+  (define (run-prog name base suffix)
+    (define out (with-output-to-string
+                  (lambda () (system/noisy (format "pycket-c ~a~a.rkt"
+                                                   base
+                                                   suffix)))))
+    (hash name
+          (extract-number #rx#"cpu time: ([0-9]+)" out)))
+
+  (define (run-church name suffix)
+    (run-prog name "church" suffix))
+  (define (run-bubble name suffix)
+    (run-prog name "bubble" suffix))
+
+  ;;(void (system/noisy "raco make proc-bm.rkt church.rkt church-wrap.rkt"))
+  ;;(void (system/noisy "raco make church-chap.rkt church-chap-a.rkt church-contract.rkt"))
+  ;;(void (system/noisy "raco make bubble.rkt bubble-chap.rkt bubble-unsafe.rkt bubble-unsafe2.rkt"))
+  ;;(void (system/noisy "raco make struct-bm.rkt"))
+
+  (merge
+    (multi-run (lambda () (run-bubble 'bubble "")))
+    (multi-run (lambda () (run-bubble 'bubble-chaperone "-chap")))
+    (multi-run (lambda () (run-proc)))
+    (multi-run (lambda () (run-church 'church "")))
+    (multi-run (lambda () (run-church 'church-wrap "-wrap")))
+    (multi-run (lambda () (run-church 'church-chaperone "-chap")))
+    (multi-run (lambda () (run-church 'church-chaperone/a "-chap-a")))
+    (multi-run (lambda () (run-church 'church-contract "-contract")))
+    (multi-run (lambda () (run-bubble 'bubble "")))
+    (multi-run (lambda () (run-bubble 'bubble-chaperone "-chap")))
+    (multi-run (lambda () (run-bubble 'bubble-unsafe "-unsafe")))
+    (multi-run (lambda () (run-bubble 'bubble-unsafe* "-unsafe2")))
+    (multi-run (lambda () (run-struct)))))
+
 (define (run-v8)
   (run-js v8-cmd "--noincremental-marking"))
 
@@ -206,6 +262,7 @@
 
 (define runners
   (hash "racket" run-racket
+        "pycket" run-pycket
         ;;"racket-hack-jit" run-racket-hack-jit
         "larceny" run-larceny
         "chicken" run-chicken

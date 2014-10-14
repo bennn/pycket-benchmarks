@@ -11,7 +11,7 @@
 
 (define (run-to-string hack prog)
   (with-output-to-string
-    (lambda () 
+    (lambda ()
       (system/noisy (format "racket-hack-~a ~a" hack prog)))))
 
 (define (run-and-merge run-one #:hacks [hacks proc-hacks])
@@ -63,9 +63,9 @@
     (define pre (cadr (read in)))
     (define cpu (extract-number #rx"cpu time: ([0-9]+)[^\n]*" in))
     (define post (cadr (read in)))
-    (hash 
+    (hash
      (string->symbol hack)
-     (list cpu 
+     (list cpu
            (- (car post) (car pre))
            (- (cadr post) (cadr pre)))))
   (run-and-merge run-one))
@@ -76,7 +76,7 @@
     (define in (open-input-string out))
     (define cpu (extract-number #rx"cpu time: ([0-9]+)[^\n]*" in))
     (define stats (cadr (read in)))
-    (hash 
+    (hash
      (string->symbol hack)
      (cons cpu stats)))
   (run-and-merge run-one))
@@ -90,9 +90,9 @@
     (define pre (read in))
     (define cpu (extract-number #rx"cpu time: ([0-9]+)[^\n]*" in))
     (define post (read in))
-    (hash 
+    (hash
      (string->symbol hack)
-     (list cpu 
+     (list cpu
            (- (car post) (car pre))
            (- (cadr post) (cadr pre)))))
   (run-and-merge run-one))
@@ -108,7 +108,7 @@
     (read-line in)
     (read-line in)
     (define stats (cadr (read in)))
-    (hash 
+    (hash
      (string->symbol hack)
      (list cpu (car stats) (cadr stats))))
   (run-and-merge run-one #:hacks '("count" "skip-co" "skip-vca" "skip-vc" "skip-cvc")))
@@ -116,8 +116,8 @@
 (define (run-lazy)
   (define (run-one variant)
     (define (run-half which)
-      (run-to-string "count" 
-                     (format 
+      (run-to-string "count"
+                     (format
                       "struct/pff.rkt --stdout --~a struct/koala-face.trace.gz ~s 0"
                       which
                       variant)))
@@ -132,7 +132,7 @@
     (define mem (read mem-in))
     (hash
      (string->symbol variant)
-     (list cpu 
+     (list cpu
            (list-ref stats 4)
            (list-ref stats 5)
            mem)))
