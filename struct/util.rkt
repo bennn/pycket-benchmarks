@@ -6,9 +6,9 @@
          load-data
          save-data)
 
-(define (save-data file data) 
+(define (save-data file data)
   (call-with-output-file (build-path "data" file)
-    (λ (port) 
+    (λ (port)
       (write data port)
       (newline port))
     'truncate))

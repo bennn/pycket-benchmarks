@@ -1,6 +1,6 @@
 #lang racket
 (provide (all-defined-out))
-    
+
 (define N 4)
 
 (define (extract-number pattern in #:multiply [multiply 1])
@@ -8,7 +8,7 @@
   (unless m (error 'extract-number "match failed: ~e" pattern))
   (* multiply
      (string->number
-      (bytes->string/utf-8 
+      (bytes->string/utf-8
        (cadr m)))))
 
 (define orig-out (current-output-port))

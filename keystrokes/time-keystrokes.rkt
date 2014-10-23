@@ -1,7 +1,5 @@
 (module time-keystrokes mzscheme
 
-  (require ffi/unsafe)
-  
   (require drscheme/tool
            mzlib/list
            mzlib/unit
@@ -9,28 +7,28 @@
            mzlib/etc
            mred
            framework)
-  
+
   (provide tool@)
-  
+
   (define short-str "(abc)")
   (define chars-to-test (build-string
                          400
                          (λ (i) (string-ref short-str (modulo i (string-length short-str))))))
-  
+
   (define tool@
-    (unit 
+    (unit
       (import drscheme:tool^)
       (export drscheme:tool-exports^)
-      
+
       (define (phase1) (void))
       (define (phase2) (void))
-      
+
       (define (tool-mixin super%)
         (class super%
           (inherit get-button-panel)
           (super-new)
-          (thread (lambda () (sleep 5) (queue-callback 
-                                        (lambda () 
+          (thread (lambda () (sleep 5) (queue-callback
+                                        (lambda ()
                                           (time-keystrokes this)
                                           (exit))
                                         #f)))
@@ -38,12 +36,12 @@
                              (label "Time Keystrokes")
                              (parent (get-button-panel))
                              (callback
-                              (lambda (button evt) 
+                              (lambda (button evt)
                                 (time-keystrokes this))))])
             (send (get-button-panel) change-children
                   (lambda (l)
                     (cons button (remq button l)))))))
-      
+
       (define (time-keystrokes frame)
         (let loop ([n 10])
           (when (zero? n)
@@ -54,20 +52,13 @@
               (loop (- n 1)))))
         (let ([win (send frame get-definitions-canvas)])
           (send win focus)
-          (printf "~s\n"
-                  (list (get-ffi-obj 'proc_makes #f _int)
-                        (get-ffi-obj 'proc_apps #f _int)))
-          (time (send-key-events win chars-to-test))
-          (printf "~s\n"
-                  (list (get-ffi-obj 'proc_makes #f _int)
-                        (get-ffi-obj 'proc_apps #f _int)))))
-      
+          (time (send-key-events win chars-to-test))))
+
       (define (send-key-events window chars)
         (for-each (λ (char)
                     (send-key-event window (new key-event% (key-code char))))
                   (string->list chars)))
-      
-      
+
       ;; copied from framework/test.rkt
       (define (send-key-event window event)
         (let loop ([l (ancestor-list window #t)])
@@ -77,13 +68,13 @@
                     (send window on-char event)]
                    [(is-a? window text-field%)
                     (send (send window get-editor) on-char event)]
-                   [else 
+                   [else
                     (error
                      'send-key-event
                      "focused window is not a text-field% and does not have on-char: ~s" window)])]
                 [(send (car l) on-subwindow-char window event) #f]
                 [else (loop (cdr l))])))
-      
+
       ;; copied from framework/test.rkt
       (define (ancestor-list window stop-at-top-level-window?)
         (let loop ([w window] [l null])
@@ -92,7 +83,7 @@
                        (is-a? w top-level-window<%>)))
               l
               (loop (send w get-parent) (cons w l)))))
-      
+
       (drscheme:get/extend:extend-unit-frame tool-mixin))))
 
 

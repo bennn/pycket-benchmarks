@@ -28,7 +28,7 @@
    [("--mem") "collect memory stats (not time)" (set! log-memory? #t)]
    [("--chap") "collect chaperone stats" (set! chap-stats? #t)]
    [("--stdout") "collect chaperone stats" (set! stdout? #t)]
-   #:args (tracefile benchmark counter) 
+   #:args (tracefile benchmark counter)
    (values tracefile
            benchmark
            (cond
@@ -75,7 +75,7 @@
 
 (define (run-ops pff-data insert find-min-obj remove-min)
   (define total-count (length pff-data))
-  (define priority-offset 
+  (define priority-offset
     (expt
      10
      (inexact->exact (ceiling (/ (log total-count) (log 10))))))
@@ -84,7 +84,7 @@
              [heap empty-heap])
     (cond
       [(null? ops) (void)]
-      [else 
+      [else
        (let ([op (car ops)])
          (case (car op)
            [(insert)
@@ -98,8 +98,8 @@
            [(remove-min)
             (let* ([pff-min (cadr op)]
                    [my-min (find-min-obj heap)])
-              (unless (= pff-min my-min) 
-                (error 'run-ops "line ~a removed min of ~a, expected ~a" 
+              (unless (= pff-min my-min)
+                (error 'run-ops "line ~a removed min of ~a, expected ~a"
                        count
                        pff-min
                        my-min))
@@ -129,17 +129,17 @@
        (define small-part-fn (format "~a.mem.~a" data-file-prefix counter))
        (define fn (build-path results small-part-fn))
        (printf "running ~a ~a\n" small-part-fn what)
-       
+
        (struct gc-info (major? pre-amount pre-admin-amount code-amount
                                post-amount post-admin-amount
                                start-process-time end-process-time
                                start-time end-time)
          #:prefab)
-       
+
        (thread
         (λ ()
           (let loop ([max-usage 0])
-            (sync 
+            (sync
              (handle-evt receiver
                          (λ (vec)
                            (match-define (vector level msg val) vec)
@@ -147,7 +147,7 @@
                              [(gc-info? val)
                               (loop (max max-usage (gc-info-pre-amount val)))]
                              [else (loop max-usage)])))
-             (handle-evt shutdown-logger-chan 
+             (handle-evt shutdown-logger-chan
                          (λ (chan)
                            (channel-put chan max-usage)))))))
        (thunk)

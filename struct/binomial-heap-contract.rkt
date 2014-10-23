@@ -1,13 +1,13 @@
-#lang racket/base 
+#lang racket/base
 (require racket/contract
          "binomial-heap.rkt")
 
 (provide binomial-heap?
          binomial-heap/c
          binomial-heap/opt/c
-         
+
          insert remove-min find-min-priority find-min-obj
-         
+
          c:insert c:remove-min c:find-min-priority c:find-min-obj
          o:insert o:remove-min o:find-min-priority o:find-min-obj
          ?:insert ?:remove-min ?:find-min-priority ?:find-min-obj
@@ -15,7 +15,7 @@
          s:insert s:remove-min s:find-min-priority s:find-min-obj
          t:insert t:remove-min t:find-min-priority t:find-min-obj
          n:insert n:remove-min n:find-min-priority n:find-min-obj
-         
+
          make-node
          node-rank
          node-val
@@ -24,7 +24,7 @@
          make-kons
          kons-hd
          kons-tl
-         
+
          make-h:node
          h:node-rank
          h:node-val
@@ -152,7 +152,7 @@
 (define (binomial-tree-rank=/chap-proj r v blame val)
   (cond
     [(not val) val]
-    [(h:node? val) 
+    [(h:node? val)
      (define vals-rank (h:node-rank val))
      (define vals-val (h:node-val val))
      (unless (and (number? vals-rank) (= vals-rank r))
@@ -162,13 +162,13 @@
      (define c #f)
      (chaperone-struct
       val
-      h:node-children 
-      (λ (n children) 
+      h:node-children
+      (λ (n children)
         (cond [c c]
               [else
                (set! c (add-heap-ordered/desc/chap-proj (- (h:node-rank n) 1) (h:node-val n) blame children))
                c]))
-      binomial-tree-rank=/chap-proj-prop-desc 
+      binomial-tree-rank=/chap-proj-prop-desc
       (vector r v))]
     [else
       (raise-blame-error blame v "expected a node or #f")]))
@@ -182,7 +182,7 @@
   (if (and (binomial-tree-rank=/chap-proj-prop-pred? val)
            (let ([rv-vec (binomial-tree-rank=/chap-proj-prop-get val)])
              (and (eq? r (vector-ref rv-vec 0))
-                  (eq? v (vector-ref rv-vec 0))))) 
+                  (eq? v (vector-ref rv-vec 0)))))
       val
       (binomial-tree-rank=/chap-proj r v blame val)))
 
@@ -190,11 +190,11 @@
   (cond
     [(not v) #f]
     [(h:node? v)
-     (define rank (h:node-rank v)) 
+     (define rank (h:node-rank v))
      (unless (>= rank r)
        (raise-blame-error blame v "expected a node struct with rank larger than ~e" r))
      (define c #f)
-     (chaperone-struct 
+     (chaperone-struct
       v
       h:node-children
       (λ (s children)
@@ -226,18 +226,18 @@
      (define t #f)
      (chaperone-struct
       v
-      h:kons-hd 
-      (λ (k hd) 
+      h:kons-hd
+      (λ (k hd)
         (cond
           [h h]
-          [else 
+          [else
            (set! h (add-binomial-tree-rank=/chap-proj rank val blame hd))
            h]))
       h:kons-tl
       (λ (k tl)
         (cond
           [t t]
-          [else 
+          [else
            (set! t (add-heap-ordered/desc/chap-proj (- rank 1) val blame tl))
            t]))
       heap-ordered/desc/chap-proj-prop-desc
@@ -256,7 +256,7 @@
                   (eq? (vector-ref rank-val-vec 1) val))))
       v
       (heap-ordered/desc/chap-proj rank val blame v)))
-  
+
 (define (binomial-trees/asc/chap-proj rank blame v)
   (cond
     [(not v) #f]
@@ -265,18 +265,18 @@
      (define t #f)
      (chaperone-struct
       v
-      h:kons-hd 
-      (λ (k hd) 
+      h:kons-hd
+      (λ (k hd)
         (cond
           [h h]
-          [else 
+          [else
            (set! h (add-binomial-tree-rank>/chap-proj rank blame hd))
            h]))
       h:kons-tl
       (λ (k tl)
         (cond
           [t t]
-          [else 
+          [else
            (set! t (add-binomial-trees/asc/chap-proj (h:node-rank (h:kons-hd k)) blame tl))
            t]))
       binomial-trees/asc/chap-proj-prop-desc
