@@ -41,31 +41,24 @@
 
 (define (parse-file filename)
   (call-with-input-file filename
-    (λ (zipped)
-      (let-values ([(port out) (make-pipe)])
-        (thread
-         (λ ()
-           (if (regexp-match #rx"gz$" filename)
-               (gunzip-through-ports zipped out)
-               (copy-port zipped out))
-           (close-output-port out)))
-        (let loop ([lines '()])
-          (let ([l (read-line port)])
-            (cond
-              [(eof-object? l) (reverse lines)]
-              [(regexp-match #rx"Insert: ([0-9]*) at priority ([0-9]*)$" l)
-               =>
-               (λ (m)
+    (λ (port)
+       (let loop ([lines '()])
+         (let ([l (read-line port)])
+           (cond
+             [(eof-object? l) (reverse lines)]
+             [(regexp-match #rx"Insert: ([0-9]*) at priority ([0-9]*)$" l)
+              =>
+              (λ (m)
                  (loop
-                  (cons `(insert ,(string->number/err (cadr m))
-                                 ,(string->number/err (caddr m)))
-                        lines)))]
-              [(regexp-match #rx"RemoveMin: ([0-9]*)$" l)
-               =>
-               (λ (m)
+                   (cons `(insert ,(string->number/err (cadr m))
+                                  ,(string->number/err (caddr m)))
+                         lines)))]
+             [(regexp-match #rx"RemoveMin: ([0-9]*)$" l)
+              =>
+              (λ (m)
                  (loop
-                  (cons `(remove-min ,(string->number (cadr m)))
-                        lines)))])))))))
+                   (cons `(remove-min ,(string->number (cadr m)))
+                         lines)))]))))))
 
 (define (string->number/err str)
   (let ([n (string->number str)])
@@ -108,67 +101,22 @@
                     (begin #;(printf "remove-min ~s~n" my-min)
                            (remove-min heap))))]))])))
 
-(define (get-chap-stats)
-  (list (get-ffi-obj 'proc_makes #f _int)
-        (get-ffi-obj 'proc_apps #f _int)
-        (get-ffi-obj 'vec_makes #f _int)
-        (get-ffi-obj 'vec_apps #f _int)
-        (get-ffi-obj 'struct_makes #f _int)
-        (get-ffi-obj 'struct_apps #f _int)))
-
 (define (do-benchmark what insert find-min-obj remove-min)
   (when (equal? benchmark what)
     (define pff-data (parse-file tracefile))
     (define (thunk) (run-ops pff-data insert find-min-obj remove-min))
     (when profile? (set! thunk (let ([t thunk]) (λ () (profile (t))))))
     (define data-file-prefix (regexp-replace #rx".trace(?:.gz)?$" tracefile ""))
-    (cond
-      [log-memory?
-       (define receiver (make-log-receiver (current-logger) 'debug))
-       (define shutdown-logger-chan (make-channel))
-       (define small-part-fn (format "~a.mem.~a" data-file-prefix counter))
-       (define fn (build-path results small-part-fn))
-       (printf "running ~a ~a\n" small-part-fn what)
-
-       (struct gc-info (major? pre-amount pre-admin-amount code-amount
-                               post-amount post-admin-amount
-                               start-process-time end-process-time
-                               start-time end-time)
-         #:prefab)
-
-       (thread
-        (λ ()
-          (let loop ([max-usage 0])
-            (sync
-             (handle-evt receiver
-                         (λ (vec)
-                           (match-define (vector level msg val) vec)
-                           (cond
-                             [(gc-info? val)
-                              (loop (max max-usage (gc-info-pre-amount val)))]
-                             [else (loop max-usage)])))
-             (handle-evt shutdown-logger-chan
-                         (λ (chan)
-                           (channel-put chan max-usage)))))))
-       (thunk)
-       (collect-garbage)
-       (define answer-chan (make-channel))
-       (channel-put shutdown-logger-chan answer-chan)
-       (define answer (channel-get answer-chan))
-       (if stdout?
-           (printf "~s\n" answer)
-           (rewrite-log-file fn what answer))]
-      [else
        (define small-part-fn (format "~a.time.~a" data-file-prefix counter))
        (define fn (build-path results small-part-fn))
        (printf "running ~a ~a\n" small-part-fn what)
-       (define chap-pre-stats (and chap-stats? (get-chap-stats)))
+       ;;(define chap-pre-stats (and chap-stats? (get-chap-stats)))
        (define-values (res time real-time gc-time) (time-apply thunk '()))
-       (when chap-stats?
-         (printf "~s\n" (map - (get-chap-stats) chap-pre-stats)))
+       ;;(when chap-stats?
+       ;;  (printf "~s\n" (map - (get-chap-stats) chap-pre-stats)))
        (if stdout?
            (printf "~s\n" time)
-           (rewrite-log-file fn what time))])))
+           (rewrite-log-file fn what time))))
 
 (define (rewrite-log-file fn new-key new-val)
   (define old-entries (if (file-exists? fn) (call-with-input-file fn read) '()))

@@ -155,7 +155,7 @@
      (check-equal? (f->n (c:! (n->f 3))) (! 3))
      |#
 
-     (time (void (f->n (c:! (n->f 8)))))
+     (time (void (f->n (c:! (n->f 9)))))
 
      #|
      (require (only-in ffi/unsafe get-ffi-obj _int))

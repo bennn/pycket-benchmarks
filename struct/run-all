@@ -5,9 +5,9 @@
 # it is hopeless...)
 
 for contract in "none" "opt" "opt chap" ; do # "hand chap" "chap" "normal" "flat"; do
-    for trace in koala-face; do #  elephant elephant-big bird koala-face; do
+    for trace in elephant elephant-big bird koala-face; do
 	for iteration in 0 1 2; do
-	    racket pff.rkt "${trace}.trace.gz" "$contract" "$iteration"
+	    racket pff.rkt "${trace}.trace" "$contract" "$iteration"
 		#racket pff.rkt --mem "${trace}.trace.gz" "$contract" "$iteration"
 	done
     done

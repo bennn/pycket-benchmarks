@@ -15,10 +15,10 @@ function bubble_sort(vec)
 {
     var changed = true;
     var i, a, b;
-    
+
     while (changed) {
         changed = false;
-        
+
         for (i = 0; i < SIZE - 1; i++) {
             a = vec[i];
             b = vec[i+1];
@@ -33,7 +33,7 @@ function bubble_sort(vec)
 
 var vec = make_vec(SIZE);
 
-var milliseconds1 = Date.now(); 
+var milliseconds1 = Date.now();
 bubble_sort(vec);
-var milliseconds2 = Date.now(); 
+var milliseconds2 = Date.now();
 print(milliseconds2 - milliseconds1);
