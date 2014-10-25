@@ -1,18 +1,16 @@
 #lang racket/base
 (require "binomial-heap.rkt"
          "binomial-heap-contract.rkt"
-         file/gunzip
          racket/contract
          racket/port
          racket/cmdline
-         racket/runtime-path
+         ;;racket/runtime-path
          racket/list
          racket/match
-         profile
-         (only-in ffi/unsafe get-ffi-obj _int))
+         profile)
 
-(define-runtime-path results "results")
-(unless (directory-exists? results) (make-directory results))
+(define results "results")
+;;(unless (directory-exists? results) (make-directory results))
 
 (define (apply-contract c v) (contract c v 'pos 'neg))
 
@@ -37,6 +35,9 @@
              [else
               (error 'pff.rkt" expected counter to be a number or memory, got ~a" counter)]))))
 
+;;(define-values (tracefile benchmark counter)
+;;  (values "bird.trace" "none" 0))
+
 (define shutdown-logger-chan (and log-memory? (make-channel)))
 
 (define (parse-file filename)
@@ -59,6 +60,9 @@
                  (loop
                    (cons `(remove-min ,(string->number (cadr m)))
                          lines)))]))))))
+
+;;(define (parse-file filename)
+;;  '((insert 10 10)))
 
 (define (string->number/err str)
   (let ([n (string->number str)])
@@ -106,7 +110,8 @@
     (define pff-data (parse-file tracefile))
     (define (thunk) (run-ops pff-data insert find-min-obj remove-min))
     (when profile? (set! thunk (let ([t thunk]) (λ () (profile (t))))))
-    (define data-file-prefix (regexp-replace #rx".trace(?:.gz)?$" tracefile ""))
+    ;;(define data-file-prefix (regexp-replace #rx".trace(?:.gz)?$" tracefile ""))
+    (define data-file-prefix tracefile)
        (define small-part-fn (format "~a.time.~a" data-file-prefix counter))
        (define fn (build-path results small-part-fn))
        (printf "running ~a ~a\n" small-part-fn what)
@@ -119,7 +124,7 @@
            (rewrite-log-file fn what time))))
 
 (define (rewrite-log-file fn new-key new-val)
-  (define old-entries (if (file-exists? fn) (call-with-input-file fn read) '()))
+  (define old-entries '());;(if (file-exists? fn) (call-with-input-file fn read) '()))
   (define new-entry (list new-key new-val))
   (define new-entries (sort
                        (cons
