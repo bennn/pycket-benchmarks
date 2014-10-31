@@ -35,9 +35,6 @@
              [else
               (error 'pff.rkt" expected counter to be a number or memory, got ~a" counter)]))))
 
-;;(define-values (tracefile benchmark counter)
-;;  (values "bird.trace" "none" 0))
-
 (define shutdown-logger-chan (and log-memory? (make-channel)))
 
 (define (parse-file filename)
@@ -60,9 +57,6 @@
                  (loop
                    (cons `(remove-min ,(string->number (cadr m)))
                          lines)))]))))))
-
-;;(define (parse-file filename)
-;;  '((insert 10 10)))
 
 (define (string->number/err str)
   (let ([n (string->number str)])
@@ -152,3 +146,4 @@
   (do-benchmark "opt chapc" n:insert n:find-min-obj n:remove-min))
 
 (run-all-ops)
+
