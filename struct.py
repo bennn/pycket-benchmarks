@@ -38,8 +38,10 @@ def loop(f):
     print milliseconds2 - milliseconds1
 
 fish = Fish(1, "blue")
+print "direct"
 loop(fish)
 
 fish = Proxy(Fish(1, "blue"), refs={"weight": lambda f, v: v}, sets={"weight": lambda f, v: v})
+print "proxy"
 loop(fish)
 
