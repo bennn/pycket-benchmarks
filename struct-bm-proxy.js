@@ -1,4 +1,3 @@
-
 if (typeof(print) === 'undefined') {
     print = console.log
 }
@@ -10,12 +9,6 @@ function loop(f) {
 }
 
 var fish = { weight : 1, color : "blue" };
-
-print("direct");
-milliseconds1 = Date.now();
-loop(fish);
-milliseconds2 = Date.now();
-print(milliseconds2 - milliseconds1);
 
 var proxy = Proxy.create({
     get: function(rcvr,name) { return fish[name];},
