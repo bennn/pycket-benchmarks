@@ -1,3 +1,4 @@
 *.swp
 *.rkt.json
+*.pyc
 compiled/
