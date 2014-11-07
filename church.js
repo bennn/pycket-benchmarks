@@ -46,7 +46,19 @@ var fact = function(n){
         return c_star(n)(fact(c_sub1(n)));
 }
 
-var milliseconds1 = Date.now(); 
-print(f_to_n(fact(n_to_f(9))));
-var milliseconds2 = Date.now(); 
-print(milliseconds2 - milliseconds1);
+function benchmark(fun) {
+  var milliseconds1 = Date.now();
+  var result = fun();
+  var milliseconds2 = Date.now();
+  var timing = (milliseconds2 - milliseconds1).toString();
+  if (timing.indexOf(".") === -1) {
+    timing = timing + ".0";
+  }
+  print("RESULT-cpu: " + timing);
+  print("RESULT-total: " + timing);
+}
+
+
+benchmark(function() {
+  print(f_to_n(fact(n_to_f(9))));
+})

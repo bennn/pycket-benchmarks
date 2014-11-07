@@ -51,8 +51,21 @@ var proxy = Proxy.create({
     delete : function(name) { return delete vec[name]; } },
                          Object.getPrototypeOf(vec));
 
-var milliseconds1 = Date.now();
-bubble_sort(proxy);
-var milliseconds2 = Date.now();
-print(milliseconds2 - milliseconds1);
+
+function benchmark(fun) {
+  var milliseconds1 = Date.now();
+  var result = fun();
+  var milliseconds2 = Date.now();
+  var timing = (milliseconds2 - milliseconds1).toString();
+  if (timing.indexOf(".") === -1) {
+    timing = timing + ".0";
+  }
+  print("RESULT-cpu: " + timing);
+  print("RESULT-total: " + timing);
+}
+
+
+benchmark(function() {
+  bubble_sort(proxy);
+})
 //})()

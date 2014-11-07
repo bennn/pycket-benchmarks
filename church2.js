@@ -1571,10 +1571,21 @@ if (typeof(require) !== 'undefined' && require !== null) {
     }
   });
 
-  milliseconds1 = Date.now();
+  function benchmark(fun) {
+    var milliseconds1 = Date.now();
+    var result = fun();
+    var milliseconds2 = Date.now();
+    var timing = (milliseconds2 - milliseconds1).toString();
+    if (timing.indexOf(".") === -1) {
+      timing = timing + ".0";
+    }
+    print("RESULT-cpu: " + timing);
+    print("RESULT-total: " + timing);
+  }
 
-  print(f_to_n(fact(n_to_f(9))));
 
-  print(Date.now(0) - milliseconds1);
+  benchmark(function() {
+    print(f_to_n(fact(n_to_f(9))));
+  })
 
 }).call(this);

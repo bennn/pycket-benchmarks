@@ -15,11 +15,22 @@ function g2(x) {
 }
 
 print("wrapped+return");
-milliseconds1 = Date.now();
-for (i = 0; i < 10000000; i++) {
+function benchmark(fun) {
+  var milliseconds1 = Date.now();
+  var result = fun();
+  var milliseconds2 = Date.now();
+  var timing = (milliseconds2 - milliseconds1).toString();
+  if (timing.indexOf(".") === -1) {
+    timing = timing + ".0";
+  }
+  print("RESULT-cpu: " + timing);
+  print("RESULT-total: " + timing);
+}
+
+
+benchmark(function() {
+  for (i = 0; i < 10000000; i++) {
     var l = g2(i);
     l[1](l[0]);
-}
-milliseconds2 = Date.now();
-print(milliseconds2 - milliseconds1);
-
+  }
+})

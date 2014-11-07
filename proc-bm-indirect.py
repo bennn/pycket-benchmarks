@@ -8,10 +8,9 @@ f = e
 
 print "indirect"
 
-milliseconds1 = int(round(time.time() * 1000))
+start = time.clock() * 1000
 for i in xrange(10000000):
     f(i)
-milliseconds2 = int(round(time.time() * 1000))
+delta = start - time.clock() * 1000
 
-print milliseconds2 - milliseconds1
-
+print "RESULT-cpu: %s\nRESULT-total: %s" % (delta, delta)

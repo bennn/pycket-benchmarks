@@ -31,11 +31,12 @@ class Proxy(object):
         return setattr(inner, name, new_val)
 
 def loop(f):
-    milliseconds1 = int(round(time.time() * 1000))
+    start = time.clock() * 1000
     for i in xrange(N):
         f.weight
-    milliseconds2 = int(round(time.time() * 1000))
-    print milliseconds2 - milliseconds1
+    delta = start - time.clock() * 1000
+
+    print "RESULT-cpu: %s\nRESULT-total: %s" % (delta, delta)
 
 fish = Proxy(Fish(1, "blue"), refs={"weight": lambda f, v: v}, sets={"weight": lambda f, v: v})
 print "proxy"

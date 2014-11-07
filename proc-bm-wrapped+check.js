@@ -17,10 +17,21 @@ var g1 = make_g1(function(x) { return x;},
                  function(x) { return x;});
 
 print("wrapped+check");
-milliseconds1 = new Date().getTime();
-for (i = 0; i < 10000000; i++) {
-  g1(i);
+function benchmark(fun) {
+  var milliseconds1 = Date.now();
+  var result = fun();
+  var milliseconds2 = Date.now();
+  var timing = (milliseconds2 - milliseconds1).toString();
+  if (timing.indexOf(".") === -1) {
+    timing = timing + ".0";
+  }
+  print("RESULT-cpu: " + timing);
+  print("RESULT-total: " + timing);
 }
-milliseconds2 = new Date().getTime();
-print(milliseconds2 - milliseconds1);
 
+
+benchmark(function() {
+  for (i = 0; i < 10000000; i++) {
+    g1(i);
+  }
+})
