@@ -17,6 +17,6 @@ g1 = make_g1(lambda x: x, lambda x: x)
 start = time.clock() * 1000
 for i in xrange(10000000):
     g1(i)
-delta = start - time.clock() * 1000
+delta = time.clock() * 1000 - start
 
 print "RESULT-cpu: %s\nRESULT-total: %s" % (delta, delta)

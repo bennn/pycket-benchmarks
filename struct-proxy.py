@@ -34,7 +34,7 @@ def loop(f):
     start = time.clock() * 1000
     for i in xrange(N):
         f.weight
-    delta = start - time.clock() * 1000
+    delta = time.clock() * 1000 - start
 
     print "RESULT-cpu: %s\nRESULT-total: %s" % (delta, delta)
 

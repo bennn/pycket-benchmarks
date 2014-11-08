@@ -11,6 +11,6 @@ print "indirect"
 start = time.clock() * 1000
 for i in xrange(10000000):
     f(i)
-delta = start - time.clock() * 1000
+delta = time.clock() * 1000 - start
 
 print "RESULT-cpu: %s\nRESULT-total: %s" % (delta, delta)

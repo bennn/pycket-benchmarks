@@ -36,6 +36,6 @@ vec = ListProxy(make_vec(SIZE))
 
 start = time.clock() * 1000
 bubble_sort(vec)
-delta = start - time.clock() * 1000
+delta = time.clock() * 1000 - start
 
 print "RESULT-cpu: %s\nRESULT-total: %s" % (delta, delta)

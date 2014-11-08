@@ -77,6 +77,6 @@ def fact(n):
 
 start = time.clock() * 1000
 function_to_number(fact(number_to_function(9)))
-delta = start - time.clock() * 1000
+delta = time.clock() * 1000 - start
 
 print "RESULT-cpu: %s\nRESULT-total: %s" % (delta, delta)
