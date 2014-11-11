@@ -18,6 +18,7 @@
 (define log-memory? #f)
 (define chap-stats? #f)
 (define stdout? #f)
+(define stderr? #f)
 
 (define-values (tracefile benchmark counter)
   (command-line
@@ -26,6 +27,7 @@
    [("--mem") "collect memory stats (not time)" (set! log-memory? #t)]
    [("--chap") "collect chaperone stats" (set! chap-stats? #t)]
    [("--stdout") "collect chaperone stats" (set! stdout? #t)]
+   [("--stderr") "collect chaperone stats" (begin (set! stdout? #t) (set! stderr? #t))]
    #:args (tracefile benchmark counter)
    (values tracefile
            benchmark
@@ -114,7 +116,10 @@
        ;;(when chap-stats?
        ;;  (printf "~s\n" (map - (get-chap-stats) chap-pre-stats)))
        (if stdout?
-           (printf "~s\n" time)
+           (if stderr?
+               (let ((t (exact->inexact time)))
+                 (fprintf (current-error-port) "\n\nRESULT-cpu: ~a\nRESULT-total: ~a\n" t t))
+               (printf "~s\n" time))
            (rewrite-log-file fn what time))))
 
 (define (rewrite-log-file fn new-key new-val)
