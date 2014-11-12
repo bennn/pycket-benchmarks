@@ -2,3 +2,4 @@
 *.rkt.json
 *.pyc
 compiled/
+results/
