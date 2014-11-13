@@ -116,6 +116,16 @@
   (-> standard-control-state? inexact-real?))
  (standard-control-state-a_dydt
   (-> standard-control-state? inexact-real?))
+ (ode-evolve-apply
+  (-> ode-evolve?
+      ode-control?
+      ode-step?
+      ode-system?
+      box?
+      real?
+      box?
+      (vectorof real?)
+      any))
  )
 
 (provide
@@ -130,7 +140,6 @@
  control-y-new
  control-yp-new
  ode-evolve-reset
- ode-evolve-apply
  )
 
 ;;; Routines
