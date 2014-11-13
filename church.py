@@ -31,9 +31,8 @@ def fact(n):
     return times(n)(fact(sub1(n)))
 
 
-milliseconds1 = int(round(time.time() * 1000))
+start = time.clock() * 1000
 function_to_number(fact(number_to_function(9)))
-milliseconds2 = int(round(time.time() * 1000))
+delta = time.clock() * 1000 - start
 
-print milliseconds2 - milliseconds1
-
+print "RESULT-cpu: %s\nRESULT-total: %s" % (delta, delta)
