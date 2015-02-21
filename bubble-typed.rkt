@@ -2,6 +2,7 @@
 
 (define SIZE 10000)
 
+(: vec (Vectorof Integer))
 (define vec (make-vector SIZE))
 (for ([i (in-range SIZE)])
   (vector-set! vec i (- SIZE i)))
