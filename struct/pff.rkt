@@ -148,7 +148,7 @@
   (do-benchmark "chap"      s:insert s:find-min-obj s:remove-min)
   (do-benchmark "opt chap"  t:insert t:find-min-obj t:remove-min)
   (do-benchmark "flat"      ?:insert ?:find-min-obj ?:remove-min)
-  (do-benchmark "opt chapc" n:insert n:find-min-obj n:remove-min))
+  )
 
 (run-all-ops)
 

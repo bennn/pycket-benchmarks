@@ -14,7 +14,6 @@
          h:insert h:remove-min h:find-min-priority h:find-min-obj
          s:insert s:remove-min s:find-min-priority s:find-min-obj
          t:insert t:remove-min t:find-min-priority t:find-min-obj
-         n:insert n:remove-min n:find-min-priority n:find-min-obj
 
          make-node
          node-rank
@@ -368,40 +367,6 @@
 
 (define binomial-heap/sco (binomial-trees/asc/sco -inf.0))
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;; struct/c, cons chaperone opt
-;;
-;; this doesn't work because the cons/c aren't lazy
-;;
-
-
-(define-opt/c (binomial-tree-rank=/scon r v)
-  (or/c #f
-        (struct/dc h:node
-                   [rank (=/c r)]
-                   [val (>=/c v)]
-                   [children (rank val) #:lazy (heap-ordered/desc/scon (- rank 1) val)])))
-(define-opt/c (binomial-tree-rank>/scon r)
-  (or/c #f
-        (struct/dc h:node
-                   [rank (>=/c r)]
-                   [val any/c]
-                   [children (rank val) #:lazy (heap-ordered/desc/scon (- rank 1) val)])))
-(define-opt/c (heap-ordered/desc/scon rank val)
-  (or/c #f
-        (cons/c (binomial-tree-rank=/scon rank val)
-                (heap-ordered/desc/scon (- rank 1) val))))
-(define-opt/c (binomial-trees/asc/scon rank)
-  (or/c #f
-        (cons/c (binomial-tree-rank>/scon rank)
-                (binomial-trees/asc/scon -inf.0)))) ;; this contract is wrong
-
-(define binomial-heap/scon (binomial-trees/asc/scon -inf.0))
-
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; create the variously contracted operations.
@@ -449,8 +414,4 @@
 (define t:find-min-priority (apply-contract (-> binomial-heap/sco number?) h:find-min-priority/r))
 (define t:remove-min (apply-contract (-> binomial-heap/sco binomial-heap/sco) h:remove-min/r))
 
-(define n:insert (apply-contract (-> number? any/c binomial-heap/scon binomial-heap/scon) h:insert/r))
-(define n:find-min-obj (apply-contract (-> binomial-heap/scon number?) h:find-min-obj/r))
-(define n:find-min-priority (apply-contract (-> binomial-heap/scon number?) h:find-min-priority/r))
-(define n:remove-min (apply-contract (-> binomial-heap/scon binomial-heap/scon) h:remove-min/r))
 
